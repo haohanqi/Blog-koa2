@@ -10,6 +10,7 @@ const error =require('koa-json-error')
 const users = require('./routes/users')
 const home = require('./routes/home')
 const topics = require('./routes/topics')
+const questions = require('./routes/questions')
 const parameter =require('koa-parameter')
 const mongoose =require('mongoose')
 const {mongodb}=require('./conf/db.js')
@@ -67,6 +68,7 @@ app.use(async (ctx, next) => {
 app.use(users.routes(), users.allowedMethods())
 app.use(home.routes(),home.allowedMethods())
 app.use(topics.routes(),topics.allowedMethods())
+app.use(questions.routes(),questions.allowedMethods())
 // error-handling
 app.on('error', (err, ctx) => {
   console.error('server error', err, ctx)
