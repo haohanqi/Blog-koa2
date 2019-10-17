@@ -1,7 +1,9 @@
 const Topic = require('../models/topics.js')
 const User =require('../models/users')
 
-const find = async (ctx) => {
+
+
+  const find = async (ctx) => {
     const {keyword=''}=ctx.query
     const perPage = 5;
     let {page} = ctx.query
