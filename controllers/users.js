@@ -91,20 +91,22 @@ const unfollow = async (ctx)=>{
 }
 
 const followingTopics = async(ctx)=>{
-    console.log(ctx.state.user.id)
     const me = await User.findById(ctx.state.user.id).select('+followingTopics')
     console.log(me)
     //if user has followed this topic
     const topicId = ctx.params.id
     if(!me.followingTopics.map(id=>id.toString()).includes(topicId)){
         me.followingTopics.push(topicId)
-        me.save()
-        ctx.status=204
+        me.save()       
         ctx.body={
             id:topicId
         }
-    }
+        ctx.status=204
+
+    }else{
         ctx.throw(409,'already followed')
+    }
+        
 }
 
 const unfollowingTopics = async(ctx)=>{

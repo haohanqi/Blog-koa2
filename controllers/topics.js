@@ -1,4 +1,5 @@
 const Topic = require('../models/topics.js')
+const User =require('../models/users')
 
 const find = async (ctx) => {
     const {keyword=''}=ctx.query
@@ -58,6 +59,15 @@ const updateTopicById = async (ctx) => {
 
 }
 
+const getTopicfollower = async (ctx) => {
+    const topicId = ctx.params.id
+    const follower = await User.find({followingTopics:topicId})
+    const total =follower.length
+    ctx.body={
+        follower,
+        total
+    }
+}
 module.exports = {
-    find, createNewTopic, findById, updateTopicById
+    find, createNewTopic, findById, updateTopicById,getTopicfollower
 }

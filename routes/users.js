@@ -50,7 +50,7 @@ const checkTopicsExist=async(ctx,next)=>{
 const checkIdentity=async(ctx,next)=>{
   console.log(ctx.state.user.id)
   if(ctx.params.id !== ctx.state.user.id){
-    ctx.throw(403,'can not do')
+    ctx.throw(403,'identity check failed')
   }
   await next();
 }  
