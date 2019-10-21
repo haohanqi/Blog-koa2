@@ -1,5 +1,5 @@
 const router = require('koa-router')()
-const { find, createNewTopic, findById, updateTopicById, getTopicfollower } = require('../controllers/topics.js')
+const { find, createNewTopic, findById, updateTopicById, getTopicfollower,listQuestions } = require('../controllers/topics.js')
 const jwt = require('koa-jwt')
 const { secret } = require('../conf/db')
 //middleware
@@ -20,6 +20,8 @@ router.get('/list', find)
 router.get('/:id', findById)
 
 router.get('/:id/follower',checkTopicsExist, getTopicfollower)
+
+router.get('/:id/topics',checkTopicsExist,listQuestions)
 
 router.post('/create', auth, createNewTopic)
 

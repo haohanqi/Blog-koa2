@@ -9,6 +9,15 @@ const find = async (ctx) =>{
     }
 }
 
+const findById = async (ctx) => {
+    const {fields = ''}=ctx.query
+    const selectFields = fields.split(';').filter(f=>f).map(f=>' +'+f).join('')
+    const question = await Question.findById(ctx.params.id).select(selectFields).populate('questioner topics')
+    ctx.body={
+        question
+    }
+}
+
 const createQuestion = async (ctx) =>{
     ctx.verifyParams={
         title:{type:'string',required:true},
@@ -42,5 +51,6 @@ const deleteQuestion = async (ctx) =>{
 }
 
 module.exports={
-    createQuestion,find,updateQestion,deleteQuestion
+    createQuestion,find,updateQestion,deleteQuestion,findById
+
 }

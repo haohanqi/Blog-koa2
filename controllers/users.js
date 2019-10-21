@@ -92,7 +92,7 @@ const unfollow = async (ctx) => {
 
 const followingTopics = async (ctx) => {
     const me = await User.findById(ctx.state.user.id).select('+followingTopics')
-    console.log(me)
+
     //if user has followed this topic
     const topicId = ctx.params.id
     if (!me.followingTopics.map(id => id.toString()).includes(topicId)) {

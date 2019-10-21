@@ -1,5 +1,5 @@
 const router = require('koa-router')()
-const {find,createQuestion,updateQestion,deleteQuestion} =require('../controllers/questions')
+const {find,createQuestion,updateQestion,deleteQuestion,findById} =require('../controllers/questions')
 const Question = require('../models/questions')
 const jwt = require('koa-jwt')
 const { secret } = require('../conf/db')
@@ -28,6 +28,8 @@ const checkQuestionExist = async (ctx,next) =>{
 router.prefix('/questions')
 
 router.get('/list',find)
+
+router.get('/:id',findById)
 
 router.post('/createQuestion',auth,createQuestion)
 

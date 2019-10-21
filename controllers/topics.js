@@ -1,9 +1,10 @@
 const Topic = require('../models/topics.js')
 const User =require('../models/users')
+const Question = require ('../models/questions')
 
 
 
-  const find = async (ctx) => {
+const find = async (ctx) => {
     const {keyword=''}=ctx.query
     const perPage = 5;
     let {page} = ctx.query
@@ -25,11 +26,8 @@ const User =require('../models/users')
 const findById = async (ctx) => {
     const { id } = ctx.params
     const { fields='' } = ctx.query
-    console.log(fields)
     const selectedFields = fields.split(';').filter(f => f).map(f => ' +' + f).join('')
-    console.log(selectedFields)
     const topic = await Topic.findById(id).select(selectedFields)
-
     ctx.body = topic
 }
 
@@ -70,6 +68,14 @@ const getTopicfollower = async (ctx) => {
         total
     }
 }
+
+const listQuestions = async (ctx) =>{
+    const questions = await Qurstion.find({topics:ctx.params.id})
+    ctx.body={
+        questions 
+    }
+
+}
 module.exports = {
-    find, createNewTopic, findById, updateTopicById,getTopicfollower
+    find, createNewTopic, findById, updateTopicById,getTopicfollower,listQuestions
 }
