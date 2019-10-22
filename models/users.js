@@ -44,8 +44,9 @@ const userSchema = new Schema({
     },
     followingTopics:{
         type:[{type:Schema.Types.ObjectId,ref:'Topic',select:false}]
-    }
-
+    },
+    likes:{type:[{type:Schema.Types.ObjectId,ref:'Answer',select: false}]},
+    dislikes:{type:[{type:Schema.Types.ObjectId,ref:'Answer',select: false}]}
 
 
 });

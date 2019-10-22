@@ -6,9 +6,11 @@ const {
   findUserById,
   getUserFollowing,
   followUp, unfollow, getUserFollowers,
-  followingTopics, unfollowingTopics
+  followingTopics, unfollowingTopics,listLikesAnswers,likeAnswer,
+  unlikeAnswer,listdisLikesAnswers,dislikeAnswer,undislikeAnswer
 } = require('../controllers/users')
 const User = require('../models/users')
+const Answer=require('../models/answers')
 const Topic = require('../models/topics')
 const jsonwebtoken = require('jsonwebtoken')
 const jwt = require('koa-jwt')
@@ -46,6 +48,14 @@ const checkTopicsExist = async (ctx, next) => {
     ctx.throw(404, 'topic does not exist')
   }
   await next()
+}
+const checkAnswerExist = async (ctx,next) =>{
+  const answer = await Answer.findById(ctx.params.id)
+  if(!answer){
+    ctx.throw(404,'answer does not exist ')
+  }
+  await next()
+
 }
 const checkIdentity = async (ctx, next) => {
   console.log(ctx.state.user.id)
@@ -88,6 +98,18 @@ router.get('/:id/followers', async function (ctx, next) {
     userList,
   }
 })
+
+//get specific user's likes by id 
+router.get('/:id/listlikes',checkUserExist,listLikesAnswers)
+
+//user likes some answer by id 
+router.put('/liking/:id',auth,checkAnswerExist,likeAnswer,undislikeAnswer)
+
+//user dislike some answer by id 
+router.put('/disliking/:id',auth,checkAnswerExist,dislikeAnswer,unlikeAnswer)
+
+//get specific user's dislikes by id 
+router.get('/:id/listdislikes',checkUserExist,listdisLikesAnswers)
 
 //user followup some user by id 
 router.put('/following/:id', auth, checkUserExist, followUp)

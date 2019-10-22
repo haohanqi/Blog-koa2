@@ -5,6 +5,7 @@ const jsonwebtoken = require('jsonwebtoken')
 const { secret } = require('../conf/db')
 
 const User = require('../models/users')
+const Answer = require('../models/answers')
 
 const find = async (ctx) => {
     let { page } = ctx.query
@@ -89,7 +90,7 @@ const unfollow = async (ctx) => {
     ctx.throw(409, 'id does not exists')
 
 }
-
+ 
 const followingTopics = async (ctx) => {
     const me = await User.findById(ctx.state.user.id).select('+followingTopics')
 
@@ -124,6 +125,99 @@ const unfollowingTopics = async (ctx) => {
     }
 
 }
+
+const likeAnswer = async (ctx,next) =>{
+    const userId = ctx.state.user.id
+    const answerId = ctx.params.id
+
+    const user = await User.findById(userId).select('+likes')
+
+    if(!user.likes.map(id=>id.toString()).includes(answerId)){
+        user.likes.push(answerId)
+        user.save()
+        await Answer.findByIdAndUpdate(answerId,{$inc: {vote:1}})
+        
+        ctx.body={
+            id: answerId
+        }
+        ctx.status=204
+        await next()
+    }else{
+        
+        ctx.throw(409,'answer has aready in the list')
+    }
+       
+}
+
+const unlikeAnswer = async (ctx) =>{
+   const userId = ctx.state.user.id
+   const answerId = ctx.params.id
+   const user = await User.findById(userId).select('+likes')
+   const index = user.likes.map(id=>id.toString()).indexOf(answerId)
+   if(index>-1){
+       user.likes.splice(index,1)
+       user.save()
+       await Answer.findByIdAndUpdate(answerId,{$inc: {vote:-1}})
+       ctx.body={
+           id:answerId
+       }
+       ctx.status=204
+   }
+
+}
+
+const listLikesAnswers = async (ctx) =>{
+    const userId = ctx.params.id
+    const user = await User.findById(userId).select('+likes').populate()
+    ctx.body={
+        likes: user.likes
+    }
+}
+
+const dislikeAnswer = async (ctx,next) =>{
+    const userId = ctx.state.user.id
+    const answerId = ctx.params.id
+
+    const user = await User.findById(userId).select('+dislikes')
+
+    if(!user.dislikes.map(id=>id.toString()).includes(answerId)){
+        user.dislikes.push(answerId)
+        user.save()        
+        ctx.body={
+            id: answerId
+        }
+        ctx.status=204
+        await next()
+    }else{
+        ctx.throw(409,'answer has aready in the list')
+    }
+       
+}
+
+const undislikeAnswer = async (ctx) =>{
+   const userId = ctx.state.usr.id
+   const answerId = ctx.params.id
+   const user = await User.findById(userId).select('+dislikes')
+   const index = user.dislikes.map(id=>id.toString()).indexOf(answerId)
+   if(index>-1){
+       user.dislikes.splice(index,1)
+       user.save()
+       ctx.body={
+           id:answerId
+       }
+       ctx.status=204
+   }
+
+}
+
+const listdisLikesAnswers = async (ctx) =>{
+    const userId = ctx.params.id
+    const user = await User.findById(userId).select('+dislikes').populate()
+    ctx.body={
+        dislikes: user.dislikes
+    }
+}
+
 
 const postUser = async (ctx) => {
     ctx.verifyParams({
@@ -201,5 +295,6 @@ const login = async (ctx) => {
 module.exports = {
     find, postUser, deleteUser, updateUserById,
     login, findUserById, getUserFollowing, followUp, unfollow, getUserFollowers,
-    followingTopics, unfollowingTopics
+    followingTopics, unfollowingTopics,listLikesAnswers,likeAnswer,unlikeAnswer,dislikeAnswer,
+    undislikeAnswer,listdisLikesAnswers
 }

@@ -11,7 +11,6 @@ const createNewAnswer = async (ctx) =>{
     })
      
     const {questionId} = ctx.params
-    console.log(ctx.state)
     const userId = ctx.state.user.id
     const answer = await new Answer({...ctx.request.body,questionId:questionId,answerser:userId}).save()
     ctx.body={answer}
@@ -27,6 +26,15 @@ const updateAnswer = async (ctx) =>{
     ctx.body={answer}
 }
 
+const deleteAnswer = async (ctx) =>{
+   const result = await Answer.findByIdAndDelete(ctx.params.id)
+   if(result){
+       ctx.body={
+           result
+       }
+   }
+}
 
-module.exports={find,createNewAnswer,updateAnswer}
+
+module.exports={find,createNewAnswer,updateAnswer,deleteAnswer}
 
